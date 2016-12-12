@@ -34,9 +34,9 @@ for i=1:length(speech_dir)
             voiced_frames=voicedetection(frames);
             num_wav=num_wav+1;
             if num_wav <= 8
-                train_frames=[train_frames,voiced_frames];
+                train_frames=[train_frames,voiced_frames];                              %take the voiced framdes in first 8 wav files as training set
             else
-                test_frames=[test_frames,voiced_frames];
+                test_frames=[test_frames,voiced_frames];                                %take the voiced framdes in last 2 wav files as test set
             end
         end
         
