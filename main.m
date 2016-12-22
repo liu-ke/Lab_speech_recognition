@@ -1,9 +1,9 @@
 clc;
-clear all;
 speech_dirpath='F:\Courses\INFOTECH\2017ws\DPRLAB\patRecDat\forStudents\timit\test';%path of training data
 speech_dir=dir(speech_dirpath);%get information (dr1-9) under training data speech_dir
 name_res=zeros(160*1);
 num_person=0;
+Fs=16000;
 for i=1:length(speech_dir)
     index=regexp(speech_dir(i).name,'dr+\d');                   %index=1 if dr_dirpath(i).name matched to dr0-dr9
     if(~size(index))
@@ -39,6 +39,10 @@ for i=1:length(speech_dir)
                 test_frames=[test_frames,voiced_frames];                                %take the voiced framdes in last 2 wav files as test set
             end
         end
-        
+        window_method=1;            %1=hanning,2=hamming,3=blackman
+        windowed_frames=window(frames,window_method);
+        spectrum_frames=fft(windowed_frames);
+        filtered_frames=Mel_Filter(spectrum_frames,Fs);
+        features=dct(filtered_frames);
     end
 end
