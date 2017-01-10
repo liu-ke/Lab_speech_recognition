@@ -34,15 +34,17 @@ for i=1:length(speech_dir)
             voiced_frames=voicedetection(frames);
             num_wav=num_wav+1;
             if num_wav <= 8
-                train_frames=[train_frames,voiced_frames];                              %take the voiced framdes in first 8 wav files as training set
+                train_frames=[train_frames,voiced_frames];                              %take the voiced framdes in first 8 wav files as a training set
             else
-                test_frames=[test_frames,voiced_frames];                                %take the voiced framdes in last 2 wav files as test set
+                test_frames=[test_frames,voiced_frames];                                %take the voiced framdes in last 2 wav files as a test set
             end
         end
         window_method=1;            %1=hanning,2=hamming,3=blackman
         windowed_frames=window(frames,window_method);
         spectrum_frames=fft(windowed_frames);
         filtered_frames=Mel_Filter(spectrum_frames,Fs);
-        features=dct(filtered_frames);
+        features=Mel_DCT(filtered_frames);
+        ubm_dataset=load('F:\Courses\INFOTECH\2017ws\DPRLAB\patRecDat\forStudents\ubm\UBM_GMMNaive_MFCC_Spectrum0to8000Hz.mat');
+        [weights,means,covariances]=speakermodel(ubm_dataset,features);
     end
 end
