@@ -1,4 +1,4 @@
-function [out_frequency]=Mel_Scale(in_frequency,inverse)
+function [out_frequency]=new_Mel_Scale(in_frequency,inverse)
 
 if inverse==0
     if in_frequency>1000

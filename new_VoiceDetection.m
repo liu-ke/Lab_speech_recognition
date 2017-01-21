@@ -1,4 +1,4 @@
-function [voiced_frames]=voicedetection(frames)
+function [voiced_frames]=new_VoiceDetection(frames)
 
 tn=100;
 tfeed=10;
