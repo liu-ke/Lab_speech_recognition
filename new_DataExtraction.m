@@ -1,7 +1,8 @@
-function [train_frames,test_frames]=new_DataExtraction(dir_path)
-%1. Extract speech data
-train_frames=cell(0,1);
-test_frames=cell(0,1);
+function [frames,endindex]=new_DataExtraction(dir_path)
+%1. Extract speech data 
+
+frames=cell(0,1);
+endindex=cell(0,1);                                             %the end index of each wav-file
 speech_dir=dir(dir_path);                                       %get information (dr1-9) under training data speech_dir
 for i=1:length(speech_dir)
     index=regexp(speech_dir(i).name,'dr+\d');                   %index=1 if dr_dirpath(i).name matched to dr0-dr9
@@ -18,9 +19,8 @@ for i=1:length(speech_dir)
         dat_dirpath=fullfile(dir_path,speech_dir(i).name,dr_dir(j).name);       %get paths of ppl's name
         dat_dir=dir(dat_dirpath);                                               %get the information under ppl's name
         name=regexp(dat_dirpath,'[fm]\w\w\w+\d','match');                       %get the speaker's name
-        num_wav=0;                                                          %number of person's file
-        train_frames_a_speaker=[];
-        test_frames_a_speaker=[];
+        frames_a_speaker=[];
+        endindex_a_wav=[0];
         for k=1:length(dat_dir)
             index=regexp(dat_dir(k).name,'s+\w+\S');
             if(~size(index))
@@ -32,14 +32,10 @@ for i=1:length(speech_dir)
             frames_a_wav=new_FrameSegmentation(content);
 %3. 
             voiced_frames=new_VoiceDetection(frames_a_wav);
-            num_wav=num_wav+1;
-            if num_wav <= 9
-                train_frames_a_speaker=[train_frames_a_speaker,voiced_frames];                              %take the voiced framdes in first 8 wav files as a training set
-            else
-                test_frames_a_speaker=[test_frames_a_speaker,voiced_frames];                                %take the voiced framdes in last 2 wav files as a test set
-            end
+            frames_a_speaker=[frames_a_speaker,voiced_frames];                              %take the voiced frames          
+            endindex_a_wav=[endindex_a_wav,size(frames_a_speaker,2)];                       %log the end index of each wav-file
         end
-        train_frames=[train_frames;train_frames_a_speaker,];
-        test_frames=[test_frames;test_frames_a_speaker];
+        frames=[frames;frames_a_speaker,];
+        endindex=[endindex;endindex_a_wav];
     end
 end

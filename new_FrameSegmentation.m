@@ -1,4 +1,5 @@
 function [frames]=new_FrameSegmentation(audio_input)
+
 %to segment the audio input into several frames, with each one 320 samples
 num=floor(length(audio_input)/160)-1;
 frames=zeros(320,num);
