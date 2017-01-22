@@ -1,7 +1,7 @@
 function [result]=new_SpeakerIdentification(frames,means,covariances,weights)
-%means:15*49 per cell(speaker)
-%covariances:15*49 per cell(speaker)
-%weights:1*49 per cell(speaker)
+%means: a 170*1 cell with a 15*49 matrix per cell(speaker)
+%covariances: a 170*1 cell with a 15*49 matrix per cell(speaker)
+%weights: a 170*1 cell with a 1*49 row vector per cell(speaker)
 num_speaker=170;
 likelihood=zeros(num_speaker,length(frames));
 for n=1:length(frames)                  %iterate for all test speakers

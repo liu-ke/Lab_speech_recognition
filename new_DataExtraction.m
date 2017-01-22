@@ -1,5 +1,8 @@
 function [frames,endindex]=new_DataExtraction(dir_path)
-%1. Extract speech data 
+%1. Extract, segment speech data into frames and detect voiced frames
+%dir_path: path of speech data, within which are dr1-dr9 folders
+%frames: 170*1 cell, with each element a matrix (dim:320*number_of_frames), which contains all voiced frames of one speaker
+%endindex: 170*1 cell, with each element a row vector (dim: 1*11)
 
 frames=cell(0,1);
 endindex=cell(0,1);                                             %the end index of each wav-file
@@ -18,7 +21,6 @@ for i=1:length(speech_dir)
         end
         dat_dirpath=fullfile(dir_path,speech_dir(i).name,dr_dir(j).name);       %get paths of ppl's name
         dat_dir=dir(dat_dirpath);                                               %get the information under ppl's name
-        name=regexp(dat_dirpath,'[fm]\w\w\w+\d','match');                       %get the speaker's name
         frames_a_speaker=[];
         endindex_a_wav=[0];
         for k=1:length(dat_dir)
@@ -30,7 +32,7 @@ for i=1:length(speech_dir)
             content=audioread(wav_path);                                                        %get the wav signals of one file
 %2. Segment speech data into frames
             frames_a_wav=new_FrameSegmentation(content);
-%3. 
+%3. Detect voiced frames
             voiced_frames=new_VoiceDetection(frames_a_wav);
             frames_a_speaker=[frames_a_speaker,voiced_frames];                              %take the voiced frames          
             endindex_a_wav=[endindex_a_wav,size(frames_a_speaker,2)];                       %log the end index of each wav-file

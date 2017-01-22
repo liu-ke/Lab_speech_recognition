@@ -1,5 +1,9 @@
 function[filtered_vectors]=new_Mel_Filter(spectrum_frames,fs)
-Mel_fmax=new_Mel_Scale(fs/2,0);                     %Map frequency to Mel frequency
+%Use Mel Filter to filter voiced frames 
+%fs: sampling frequency
+%spectrum_frames:170*1 cell, with each element a windowed frequency frames (dim: 320*num_frames)
+%filtered_vectors:170*1 cell, with each element a Mel Filtered frames (dim: 22*num_frames)
+Mel_fmax=new_Mel_Scale(fs/2,0);                 %Map frequency to Mel frequency
 num_tri_filters=22;                             %number of triangle filters
 len_a_filter=Mel_fmax/(num_tri_filters+1);      %length of one triangle filter in Mel frequency
 Mel_tri=zeros(num_tri_filters+2,1);             %triangle points in Mel Scale frequency
@@ -10,8 +14,8 @@ end
 for i=1:length(Mel_tri)                         %Mel frequency scale
     F_tri(i)=new_Mel_Scale(Mel_tri(i),1);           %Map triangle points from Mel_frequency to frequency    
 end
-filtered_vectors=cell(length(spectrum_frames),1);
-num_f=size(spectrum_frames{1,1},1)                     %the number of frequency length
+filtered_vectors=cell(length(spectrum_frames),1);       %should be 170*1 cell
+num_f=size(spectrum_frames{1,1},1);                     %the number of frequency length, should be 320
 for j=1:length(spectrum_frames)
     s=size(spectrum_frames{j,1},2);                 %s is the number of frames of each speaker
     filtered_vectors{j,1}=zeros(num_tri_filters,s);
@@ -22,7 +26,7 @@ for j=1:length(spectrum_frames)
         W_length=W_end-W_start;
         W=zeros(W_points,1);
         for k=0:W_points-1
-            W(k+1)=(W_length/2-abs(k+(ceil(W_start)-W_start)-W_length/2))/(W_length/2);                 %linear interpolation
+            W(k+1)=(W_length/2-abs(k+(ceil(W_start)-W_start)-W_length/2))/(W_length/2);                 %linear interpolate to get the Mel filter bank
         end
         W=repmat(W,[1,s]);
         filtered_vectors{j,1}(i,:)=sum(spectrum_frames{j,1}(ceil(W_start):floor(W_end),:).*W,1);        %multiply spectrum with triangles correspondingly, and then sum by column
