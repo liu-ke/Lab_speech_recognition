@@ -1,4 +1,5 @@
 clc;
+clf;
 speech_dirpath='F:\Courses\INFOTECH\2017ws\DPRLAB\patRecDat\forStudents\timit\test';%path of speech data
 ubm_dataset=load('F:\Courses\INFOTECH\2017ws\DPRLAB\patRecDat\forStudents\ubm\UBM_GMMNaive_MFCC_Spectrum0to8000Hz.mat');%path of ubm file
 Fs=16000;
@@ -19,8 +20,9 @@ features=new_Mel_DCT(filtered_frames);
 %7 Cross validation
 test_data=cell(size(features));
 true_labels=[1:size(features,1)];
-err=[];
-for i=1:10
+err=zeros(10,1);
+detection_rate=zeros(10,1);
+for i=1:10                                          %iteratively take test_data from each speaker's ith wav-file, training data from other 9 wav-files  
     temp=features;
     %Seperate training data and test data
     for j=1:length(features)
@@ -31,7 +33,19 @@ for i=1:10
 %5 Make the model
     [means,covariances,weights]=new_SpeakerModel(ubm_dataset,training_data);
     
-%6 Identify the speaker
-    classified_labels=new_SpeakerIdentification(test_data,means,covariances,weights);
-    err=[err,sum(classified_labels-true_labels~=0,2)];
+%6 Identify the speaker,unknown speakers labeled as 0,others labeled id from 1-170
+    classified_labels=new_SpeakerIdentification(test_data,means,covariances,weights) ;
+    err(i)=sum(classified_labels-true_labels~=0,2)/size(test_data,1);
+    detection_rate(i)=sum(classified_labels==true_labels,2)/size(test_data,1);
 end
+subplot(2,1,1);
+xlabel('test dataset');
+ylabel('error rate');
+scatter([1:10],err,'b');
+legend('error rate');
+
+subplot(2,1,2);
+xlabel('test dataset');
+ylabel('detection rate');
+scatter([1:10],detection_rate,'r');
+legend('detection rate');
