@@ -20,6 +20,7 @@ features=new_Mel_DCT(filtered_frames);
 %7 Cross validation
 test_data=cell(size(features));
 true_labels=[1:size(features,1)];
+classified_labels=zeros(10,size(features,1));
 err=zeros(10,1);
 detection_rate=zeros(10,1);
 for i=1:10                                          %iteratively take test_data from each speaker's ith wav-file, training data from other 9 wav-files  
@@ -34,18 +35,16 @@ for i=1:10                                          %iteratively take test_data 
     [means,covariances,weights]=new_SpeakerModel(ubm_dataset,training_data);
     
 %6 Identify the speaker,unknown speakers labeled as 0,others labeled id from 1-170
-    classified_labels=new_SpeakerIdentification(test_data,means,covariances,weights) ;
-    err(i)=sum(classified_labels-true_labels~=0,2)/size(test_data,1);
-    detection_rate(i)=sum(classified_labels==true_labels,2)/size(test_data,1);
+    classified_labels(i,:)=new_SpeakerIdentification(test_data,means,covariances,weights) ;
+    err(i)=sum(classified_labels(i,:)-true_labels~=0,2)/size(test_data,1);
+    detection_rate(i)=sum(classified_labels(i,:)==true_labels,2)/size(test_data,1);
 end
-subplot(2,1,1);
+save('classification_results.mat','classified_labels');
+figure(1);
 xlabel('test dataset');
-ylabel('error rate');
 scatter([1:10],err,'b');
-legend('error rate');
-
-subplot(2,1,2);
-xlabel('test dataset');
-ylabel('detection rate');
+hold on;
 scatter([1:10],detection_rate,'r');
-legend('detection rate');
+legend('error rate','detection rate');
+hold on;
+plot([0,0,1,1],[0,1,0,1],'.');
