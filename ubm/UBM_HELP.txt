@@ -1,0 +1,18 @@
+Dokumentation for UBM data structure:
+
+The file 'UBM_GMMNaive_MFCC_Spectrum0to8000Hz.mat' contains four variables:
+
+>> 'K'
+   Number of mixture components in the GMM.
+
+>> 'D'
+   Dimension of the gaussian normal distribution.
+
+>> 'means'
+   A 'K' times 'D' dimensional double array, containing the means.
+
+>> 'var'
+   A 'K' times 'D' dimensional double array, containing the diagonal elements of the covariance matrices.
+
+>> 'weights'
+   A vector of size 'K' containing the weights for the individual mixture components.
